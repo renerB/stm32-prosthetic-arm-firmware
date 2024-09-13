@@ -34,6 +34,7 @@
 
 #define MIN_DUTY_CICLE 300
 #define MAX_DUTY_CICLE 1200
+#define POSTURES 4
 
 /* USER CODE END PD */
 
@@ -53,7 +54,9 @@ TIM_HandleTypeDef htim3;
 
 uint16_t dc = MIN_DUTY_CICLE;
 uint32_t adc_result = 0;
+uint8_t button_pressed = 0;
 uint8_t mode = 0;
+uint8_t finger_position[] = {0,0,0,0,0};
 
 
 /* USER CODE END PV */
@@ -71,6 +74,38 @@ static void MX_TIM3_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void generate_fingers_positions(uint8_t *finger_position, uint8_t mode){
+	switch(mode){
+	case 1:
+		finger_position[0] = 0;
+		finger_position[1] = 0;
+		finger_position[2] = 0;
+		finger_position[3] = 0;
+		finger_position[4] = 0;
+		break;
+	case 2:
+		finger_position[0] = 1;
+		finger_position[1] = 1;
+		finger_position[2] = 1;
+		finger_position[3] = 1;
+		finger_position[4] = 1;
+		break;
+	case 3:
+		finger_position[0] = 1;
+		finger_position[1] = 1;
+		finger_position[2] = 0;
+		finger_position[3] = 0;
+		finger_position[4] = 0;
+		break;
+	case 4:
+		finger_position[0] = 1;
+		finger_position[1] = 0;
+		finger_position[2] = 0;
+		finger_position[3] = 0;
+		finger_position[4] = 0;
+		break;
+	}
+}
 
 /* USER CODE END 0 */
 
@@ -127,20 +162,23 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
+	  if(button_pressed > 0){
+		  button_pressed = 0;
 
-	  if(mode == 0){
-		  TIM2->CCR1=dc;
-		  TIM2->CCR2=dc;
-		  TIM2->CCR4=dc;
-		  TIM3->CCR1=dc;
-		  TIM3->CCR2=dc;
-	  } else {
-		  TIM2->CCR1=0;
-		  TIM2->CCR2=0;
-		  TIM2->CCR4=0;
-		  TIM3->CCR1=0;
-		  TIM3->CCR2=0;
+		  if(mode == POSTURES){
+			  mode = 1;
+		  } else{
+			  mode++;
+		  }
+		  generate_fingers_positions(finger_position, mode);
 	  }
+
+
+	  TIM2->CCR1=dc*finger_position[0];
+	  TIM2->CCR2=dc*finger_position[1];
+	  TIM2->CCR4=dc*finger_position[2];
+	  TIM3->CCR1=dc*finger_position[3];
+	  TIM3->CCR2=dc*finger_position[4];
 
 
 	  HAL_ADC_Start_DMA(&hadc1, &adc_result, 1);
@@ -450,10 +488,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if(GPIO_Pin == BUTTON_PIN_Pin){
-		mode++;
-		if(mode > 1){
-			mode = 0;
-		}
+		button_pressed++;
 	}
 }
 
