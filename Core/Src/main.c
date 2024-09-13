@@ -53,6 +53,7 @@ TIM_HandleTypeDef htim3;
 
 uint16_t dc = MIN_DUTY_CICLE;
 uint32_t adc_result = 0;
+uint8_t mode = 0;
 
 
 /* USER CODE END PV */
@@ -126,11 +127,20 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	  TIM2->CCR1=dc;
-	  TIM2->CCR2=dc;
-	  TIM2->CCR4=dc;
-	  TIM3->CCR1=dc;
-	  TIM3->CCR2=dc;
+
+	  if(mode == 0){
+		  TIM2->CCR1=dc;
+		  TIM2->CCR2=dc;
+		  TIM2->CCR4=dc;
+		  TIM3->CCR1=dc;
+		  TIM3->CCR2=dc;
+	  } else {
+		  TIM2->CCR1=0;
+		  TIM2->CCR2=0;
+		  TIM2->CCR4=0;
+		  TIM3->CCR1=0;
+		  TIM3->CCR2=0;
+	  }
 
 
 	  HAL_ADC_Start_DMA(&hadc1, &adc_result, 1);
@@ -229,7 +239,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_4;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_7CYCLES_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -401,6 +411,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_PIN_GPIO_Port, LED_PIN_Pin, GPIO_PIN_RESET);
@@ -411,6 +422,16 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LED_PIN_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : BUTTON_PIN_Pin */
+  GPIO_InitStruct.Pin = BUTTON_PIN_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(BUTTON_PIN_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
@@ -424,6 +445,16 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
     // So The AD_RES Is Now Updated & Let's Move IT To The PWM CCR1
     // Update The PWM Duty Cycle With Latest ADC Conversion Result
 	dc = ((adc_result/4095.0)*(MAX_DUTY_CICLE-MIN_DUTY_CICLE)) + MIN_DUTY_CICLE;
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	if(GPIO_Pin == BUTTON_PIN_Pin){
+		mode++;
+		if(mode > 1){
+			mode = 0;
+		}
+	}
 }
 
 /* USER CODE END 4 */
