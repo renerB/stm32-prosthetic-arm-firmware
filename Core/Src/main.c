@@ -35,6 +35,7 @@
 #define MIN_DUTY_CICLE 300
 #define MAX_DUTY_CICLE 1200
 #define POSTURES 4
+#define DMA_BUFFER_SIZE 100
 
 /* USER CODE END PD */
 
@@ -49,15 +50,18 @@ DMA_HandleTypeDef hdma_adc1;
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN PV */
 
-uint16_t dc = MIN_DUTY_CICLE;
+uint16_t duty_cycle = MIN_DUTY_CICLE;
 uint32_t adc_result = 0;
-uint8_t button_pressed = 0;
 uint8_t mode = 0;
 uint8_t finger_position[] = {0,0,0,0,0};
 
+uint8_t button_pressed = 0;
+uint8_t start_conversion = 0;
+uint8_t finished_conversion = 0;
 
 /* USER CODE END PV */
 
@@ -68,6 +72,7 @@ static void MX_DMA_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_TIM4_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -142,8 +147,10 @@ int main(void)
   MX_TIM2_Init();
   MX_ADC1_Init();
   MX_TIM3_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
 
+  // Start all 5 PWM signals generation
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_4);
@@ -151,6 +158,8 @@ int main(void)
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
   // Calibrate The ADC On Power-Up For Better Accuracy
   HAL_ADCEx_Calibration_Start(&hadc1);
+  // Start TIM4 interruption for sampling rate control
+  HAL_TIM_Base_Start_IT(&htim4);
 
   /* USER CODE END 2 */
 
@@ -173,21 +182,25 @@ int main(void)
 		  generate_fingers_positions(finger_position, mode);
 	  }
 
-
-	  TIM2->CCR1=dc*finger_position[0];
-	  TIM2->CCR2=dc*finger_position[1];
-	  TIM2->CCR4=dc*finger_position[2];
-	  TIM3->CCR1=dc*finger_position[3];
-	  TIM3->CCR2=dc*finger_position[4];
-
-
-	  HAL_ADC_Start_DMA(&hadc1, &adc_result, 1);
-
-	  if(adc_result >= 2000){
-		  HAL_GPIO_WritePin(LED_PIN_GPIO_Port, LED_PIN_Pin, GPIO_PIN_SET);
-	  } else {
-		  HAL_GPIO_WritePin(LED_PIN_GPIO_Port, LED_PIN_Pin, GPIO_PIN_RESET);
+	  if(start_conversion > 0){
+		  start_conversion = 0;
+		  HAL_GPIO_TogglePin(LED_PIN_GPIO_Port, LED_PIN_Pin);
+		  HAL_ADC_Start_DMA(&hadc1, &adc_result, 1);
 	  }
+
+
+	  TIM2->CCR1=duty_cycle*finger_position[0];
+	  TIM2->CCR2=duty_cycle*finger_position[1];
+	  TIM2->CCR4=duty_cycle*finger_position[2];
+	  TIM3->CCR1=duty_cycle*finger_position[3];
+	  TIM3->CCR2=duty_cycle*finger_position[4];
+
+
+//	  if(adc_result >= 2000){
+//		  HAL_GPIO_WritePin(LED_PIN_GPIO_Port, LED_PIN_Pin, GPIO_PIN_SET);
+//	  } else {
+//		  HAL_GPIO_WritePin(LED_PIN_GPIO_Port, LED_PIN_Pin, GPIO_PIN_RESET);
+//	  }
 
 
 	  HAL_Delay(100);
@@ -419,6 +432,51 @@ static void MX_TIM3_Init(void)
 }
 
 /**
+  * @brief TIM4 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM4_Init(void)
+{
+
+  /* USER CODE BEGIN TIM4_Init 0 */
+
+  /* USER CODE END TIM4_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM4_Init 1 */
+
+  /* USER CODE END TIM4_Init 1 */
+  htim4.Instance = TIM4;
+  htim4.Init.Prescaler = 7200-1;
+  htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim4.Init.Period = 10000-1;
+  htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM4_Init 2 */
+
+  /* USER CODE END TIM4_Init 2 */
+
+}
+
+/**
   * Enable DMA controller clock
   */
 static void MX_DMA_Init(void)
@@ -482,13 +540,19 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
     // Conversion Complete & DMA Transfer Complete As Well
     // So The AD_RES Is Now Updated & Let's Move IT To The PWM CCR1
     // Update The PWM Duty Cycle With Latest ADC Conversion Result
-	dc = ((adc_result/4095.0)*(MAX_DUTY_CICLE-MIN_DUTY_CICLE)) + MIN_DUTY_CICLE;
+	duty_cycle = ((adc_result/4095.0)*(MAX_DUTY_CICLE-MIN_DUTY_CICLE)) + MIN_DUTY_CICLE;
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if(GPIO_Pin == BUTTON_PIN_Pin){
 		button_pressed++;
+	}
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
+	if(htim == &htim4){
+		start_conversion++;
 	}
 }
 
