@@ -22,6 +22,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "math.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,7 +37,7 @@
 #define MIN_DUTY_CICLE 300
 #define MAX_DUTY_CICLE 1200
 #define POSTURES 4
-#define DMA_BUFFER_SIZE 100
+#define DMA_BUFFER_SIZE 1
 
 /* USER CODE END PD */
 
@@ -55,7 +57,8 @@ TIM_HandleTypeDef htim4;
 /* USER CODE BEGIN PV */
 
 uint16_t duty_cycle = MIN_DUTY_CICLE;
-uint32_t adc_result = 0;
+uint32_t adc_result[DMA_BUFFER_SIZE];
+float rms_value = 0.0;
 uint8_t mode = 0;
 uint8_t finger_position[] = {0,0,0,0,0};
 
@@ -79,7 +82,8 @@ static void MX_TIM4_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void generate_fingers_positions(uint8_t *finger_position, uint8_t mode){
+void generate_fingers_positions(uint8_t *finger_position, uint8_t mode)
+{
 	switch(mode){
 	case 1:
 		finger_position[0] = 0;
@@ -110,6 +114,23 @@ void generate_fingers_positions(uint8_t *finger_position, uint8_t mode){
 		finger_position[4] = 0;
 		break;
 	}
+}
+
+float rms(uint32_t signal[], int size)
+{
+	float integral = 0;
+	float rms = 0;
+
+	int i;
+	for(i=0; i<size; i++)
+	{
+		integral += (signal[i] * signal[i]);
+	}
+
+	integral = integral / size;
+	rms = sqrt(integral);
+
+	return rms;
 }
 
 /* USER CODE END 0 */
@@ -184,8 +205,16 @@ int main(void)
 
 	  if(start_conversion > 0){
 		  start_conversion = 0;
+
 		  HAL_GPIO_TogglePin(LED_PIN_GPIO_Port, LED_PIN_Pin);
-		  HAL_ADC_Start_DMA(&hadc1, &adc_result, 1);
+		  HAL_ADC_Start_DMA(&hadc1, adc_result, DMA_BUFFER_SIZE);
+	  }
+
+	  if(finished_conversion > 0){
+		  finished_conversion = 0;
+
+		  rms_value = rms(adc_result, DMA_BUFFER_SIZE);
+		  duty_cycle = ((rms_value/4095.0)*(MAX_DUTY_CICLE-MIN_DUTY_CICLE)) + MIN_DUTY_CICLE;
 	  }
 
 
@@ -201,9 +230,6 @@ int main(void)
 //	  } else {
 //		  HAL_GPIO_WritePin(LED_PIN_GPIO_Port, LED_PIN_Pin, GPIO_PIN_RESET);
 //	  }
-
-
-	  HAL_Delay(100);
   }
   /* USER CODE END 3 */
 }
@@ -537,10 +563,7 @@ static void MX_GPIO_Init(void)
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-    // Conversion Complete & DMA Transfer Complete As Well
-    // So The AD_RES Is Now Updated & Let's Move IT To The PWM CCR1
-    // Update The PWM Duty Cycle With Latest ADC Conversion Result
-	duty_cycle = ((adc_result/4095.0)*(MAX_DUTY_CICLE-MIN_DUTY_CICLE)) + MIN_DUTY_CICLE;
+	finished_conversion++;
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
@@ -550,7 +573,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	}
 }
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
+// Timer configured to generate IT at 1kHz frequency
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
+{
 	if(htim == &htim4){
 		start_conversion++;
 	}
