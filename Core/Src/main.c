@@ -206,7 +206,7 @@ int main(void)
 	  if(start_conversion > 0){
 		  start_conversion = 0;
 
-		  HAL_GPIO_TogglePin(LED_PIN_GPIO_Port, LED_PIN_Pin);
+//		  HAL_GPIO_TogglePin(LED_PIN_GPIO_Port, LED_PIN_Pin);
 		  HAL_ADC_Start_DMA(&hadc1, adc_result, DMA_BUFFER_SIZE);
 	  }
 
@@ -314,7 +314,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_4;
+  sConfig.Channel = ADC_CHANNEL_9;
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SamplingTime = ADC_SAMPLETIME_7CYCLES_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
@@ -478,7 +478,7 @@ static void MX_TIM4_Init(void)
   htim4.Instance = TIM4;
   htim4.Init.Prescaler = 7200-1;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 10000-1;
+  htim4.Init.Period = 10-1;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
