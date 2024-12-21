@@ -35,17 +35,17 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  15 .debug_rnglists 00000913  00000000  00000000  00013450  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00017dc6  00000000  00000000  00013d63  2**0
+ 16 .debug_macro  00017dcc  00000000  00000000  00013d63  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000d5c1  00000000  00000000  0002bb29  2**0
+ 17 .debug_line   0000d5cd  00000000  00000000  0002bb2f  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0008d014  00000000  00000000  000390ea  2**0
+ 18 .debug_str    0008d029  00000000  00000000  000390fc  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000c60fe  2**0
+ 19 .comment      00000043  00000000  00000000  000c6125  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000034ac  00000000  00000000  000c6144  2**2
+ 20 .debug_frame  000034ac  00000000  00000000  000c6168  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000076  00000000  00000000  000c95f0  2**0
+ 21 .debug_line_str 00000076  00000000  00000000  000c9614  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1691,7 +1691,7 @@ int main(void)
  80011de:	4b3f      	ldr	r3, [pc, #252]	@ (80012dc <main+0x1a4>)
  80011e0:	781b      	ldrb	r3, [r3, #0]
  80011e2:	2b00      	cmp	r3, #0
- 80011e4:	d02f      	beq.n	8001246 <main+0x10e>
+ 80011e4:	d026      	beq.n	8001234 <main+0xfc>
 		  finished_conversion = 0;
  80011e6:	4b3d      	ldr	r3, [pc, #244]	@ (80012dc <main+0x1a4>)
  80011e8:	2200      	movs	r2, #0
@@ -1704,12 +1704,12 @@ int main(void)
  80011f4:	4603      	mov	r3, r0
  80011f6:	4a3a      	ldr	r2, [pc, #232]	@ (80012e0 <main+0x1a8>)
  80011f8:	6013      	str	r3, [r2, #0]
-		  duty_cycle = ((rms_value/4095.0)*(MAX_DUTY_CICLE-MIN_DUTY_CICLE)) + MIN_DUTY_CICLE;
+		  duty_cycle = ((rms_value/4095.0)*(DUTY_CYCLE_RANGE));
  80011fa:	4b39      	ldr	r3, [pc, #228]	@ (80012e0 <main+0x1a8>)
  80011fc:	681b      	ldr	r3, [r3, #0]
  80011fe:	4618      	mov	r0, r3
  8001200:	f7ff f90a 	bl	8000418 <__aeabi_f2d>
- 8001204:	a328      	add	r3, pc, #160	@ (adr r3, 80012a8 <main+0x170>)
+ 8001204:	a32a      	add	r3, pc, #168	@ (adr r3, 80012b0 <main+0x178>)
  8001206:	e9d3 2300 	ldrd	r2, r3, [r3]
  800120a:	f7ff fa87 	bl	800071c <__aeabi_ddiv>
  800120e:	4602      	mov	r2, r0
@@ -1723,72 +1723,70 @@ int main(void)
  8001222:	460b      	mov	r3, r1
  8001224:	4610      	mov	r0, r2
  8001226:	4619      	mov	r1, r3
- 8001228:	a321      	add	r3, pc, #132	@ (adr r3, 80012b0 <main+0x178>)
- 800122a:	e9d3 2300 	ldrd	r2, r3, [r3]
- 800122e:	f7fe ff95 	bl	800015c <__adddf3>
- 8001232:	4602      	mov	r2, r0
- 8001234:	460b      	mov	r3, r1
- 8001236:	4610      	mov	r0, r2
- 8001238:	4619      	mov	r1, r3
- 800123a:	f7ff fbf5 	bl	8000a28 <__aeabi_d2uiz>
- 800123e:	4603      	mov	r3, r0
- 8001240:	b29a      	uxth	r2, r3
- 8001242:	4b29      	ldr	r3, [pc, #164]	@ (80012e8 <main+0x1b0>)
- 8001244:	801a      	strh	r2, [r3, #0]
+ 8001228:	f7ff fbfe 	bl	8000a28 <__aeabi_d2uiz>
+ 800122c:	4603      	mov	r3, r0
+ 800122e:	b29a      	uxth	r2, r3
+ 8001230:	4b2d      	ldr	r3, [pc, #180]	@ (80012e8 <main+0x1b0>)
+ 8001232:	801a      	strh	r2, [r3, #0]
 	  }
 
 
-	  TIM2->CCR1=duty_cycle*finger_position[0];
- 8001246:	4b28      	ldr	r3, [pc, #160]	@ (80012e8 <main+0x1b0>)
- 8001248:	881b      	ldrh	r3, [r3, #0]
- 800124a:	461a      	mov	r2, r3
- 800124c:	4b20      	ldr	r3, [pc, #128]	@ (80012d0 <main+0x198>)
- 800124e:	781b      	ldrb	r3, [r3, #0]
- 8001250:	fb03 f202 	mul.w	r2, r3, r2
- 8001254:	f04f 4380 	mov.w	r3, #1073741824	@ 0x40000000
- 8001258:	635a      	str	r2, [r3, #52]	@ 0x34
-	  TIM2->CCR2=duty_cycle*finger_position[1];
- 800125a:	4b23      	ldr	r3, [pc, #140]	@ (80012e8 <main+0x1b0>)
- 800125c:	881b      	ldrh	r3, [r3, #0]
- 800125e:	461a      	mov	r2, r3
- 8001260:	4b1b      	ldr	r3, [pc, #108]	@ (80012d0 <main+0x198>)
- 8001262:	785b      	ldrb	r3, [r3, #1]
- 8001264:	fb03 f202 	mul.w	r2, r3, r2
- 8001268:	f04f 4380 	mov.w	r3, #1073741824	@ 0x40000000
- 800126c:	639a      	str	r2, [r3, #56]	@ 0x38
-	  TIM2->CCR4=duty_cycle*finger_position[2];
- 800126e:	4b1e      	ldr	r3, [pc, #120]	@ (80012e8 <main+0x1b0>)
- 8001270:	881b      	ldrh	r3, [r3, #0]
- 8001272:	461a      	mov	r2, r3
- 8001274:	4b16      	ldr	r3, [pc, #88]	@ (80012d0 <main+0x198>)
- 8001276:	789b      	ldrb	r3, [r3, #2]
- 8001278:	fb03 f202 	mul.w	r2, r3, r2
- 800127c:	f04f 4380 	mov.w	r3, #1073741824	@ 0x40000000
- 8001280:	641a      	str	r2, [r3, #64]	@ 0x40
-	  TIM3->CCR1=duty_cycle*finger_position[3];
- 8001282:	4b19      	ldr	r3, [pc, #100]	@ (80012e8 <main+0x1b0>)
- 8001284:	881b      	ldrh	r3, [r3, #0]
- 8001286:	461a      	mov	r2, r3
- 8001288:	4b11      	ldr	r3, [pc, #68]	@ (80012d0 <main+0x198>)
- 800128a:	78db      	ldrb	r3, [r3, #3]
- 800128c:	fb03 f202 	mul.w	r2, r3, r2
- 8001290:	4b16      	ldr	r3, [pc, #88]	@ (80012ec <main+0x1b4>)
- 8001292:	635a      	str	r2, [r3, #52]	@ 0x34
-	  TIM3->CCR2=duty_cycle*finger_position[4];
- 8001294:	4b14      	ldr	r3, [pc, #80]	@ (80012e8 <main+0x1b0>)
- 8001296:	881b      	ldrh	r3, [r3, #0]
- 8001298:	461a      	mov	r2, r3
- 800129a:	4b0d      	ldr	r3, [pc, #52]	@ (80012d0 <main+0x198>)
- 800129c:	791b      	ldrb	r3, [r3, #4]
- 800129e:	fb03 f202 	mul.w	r2, r3, r2
- 80012a2:	4b12      	ldr	r3, [pc, #72]	@ (80012ec <main+0x1b4>)
- 80012a4:	639a      	str	r2, [r3, #56]	@ 0x38
+	  TIM2->CCR1=duty_cycle*finger_position[0] + MIN_DUTY_CICLE;
+ 8001234:	4b2c      	ldr	r3, [pc, #176]	@ (80012e8 <main+0x1b0>)
+ 8001236:	881b      	ldrh	r3, [r3, #0]
+ 8001238:	461a      	mov	r2, r3
+ 800123a:	4b25      	ldr	r3, [pc, #148]	@ (80012d0 <main+0x198>)
+ 800123c:	781b      	ldrb	r3, [r3, #0]
+ 800123e:	fb02 f303 	mul.w	r3, r2, r3
+ 8001242:	f503 7296 	add.w	r2, r3, #300	@ 0x12c
+ 8001246:	f04f 4380 	mov.w	r3, #1073741824	@ 0x40000000
+ 800124a:	635a      	str	r2, [r3, #52]	@ 0x34
+	  TIM2->CCR2=duty_cycle*finger_position[1] + MIN_DUTY_CICLE;
+ 800124c:	4b26      	ldr	r3, [pc, #152]	@ (80012e8 <main+0x1b0>)
+ 800124e:	881b      	ldrh	r3, [r3, #0]
+ 8001250:	461a      	mov	r2, r3
+ 8001252:	4b1f      	ldr	r3, [pc, #124]	@ (80012d0 <main+0x198>)
+ 8001254:	785b      	ldrb	r3, [r3, #1]
+ 8001256:	fb02 f303 	mul.w	r3, r2, r3
+ 800125a:	f503 7296 	add.w	r2, r3, #300	@ 0x12c
+ 800125e:	f04f 4380 	mov.w	r3, #1073741824	@ 0x40000000
+ 8001262:	639a      	str	r2, [r3, #56]	@ 0x38
+	  TIM2->CCR4=duty_cycle*finger_position[2] + MIN_DUTY_CICLE;
+ 8001264:	4b20      	ldr	r3, [pc, #128]	@ (80012e8 <main+0x1b0>)
+ 8001266:	881b      	ldrh	r3, [r3, #0]
+ 8001268:	461a      	mov	r2, r3
+ 800126a:	4b19      	ldr	r3, [pc, #100]	@ (80012d0 <main+0x198>)
+ 800126c:	789b      	ldrb	r3, [r3, #2]
+ 800126e:	fb02 f303 	mul.w	r3, r2, r3
+ 8001272:	f503 7296 	add.w	r2, r3, #300	@ 0x12c
+ 8001276:	f04f 4380 	mov.w	r3, #1073741824	@ 0x40000000
+ 800127a:	641a      	str	r2, [r3, #64]	@ 0x40
+	  TIM3->CCR1=duty_cycle*finger_position[3] + MIN_DUTY_CICLE;
+ 800127c:	4b1a      	ldr	r3, [pc, #104]	@ (80012e8 <main+0x1b0>)
+ 800127e:	881b      	ldrh	r3, [r3, #0]
+ 8001280:	461a      	mov	r2, r3
+ 8001282:	4b13      	ldr	r3, [pc, #76]	@ (80012d0 <main+0x198>)
+ 8001284:	78db      	ldrb	r3, [r3, #3]
+ 8001286:	fb02 f303 	mul.w	r3, r2, r3
+ 800128a:	f503 7296 	add.w	r2, r3, #300	@ 0x12c
+ 800128e:	4b17      	ldr	r3, [pc, #92]	@ (80012ec <main+0x1b4>)
+ 8001290:	635a      	str	r2, [r3, #52]	@ 0x34
+	  TIM3->CCR2=duty_cycle*finger_position[4] + MIN_DUTY_CICLE;
+ 8001292:	4b15      	ldr	r3, [pc, #84]	@ (80012e8 <main+0x1b0>)
+ 8001294:	881b      	ldrh	r3, [r3, #0]
+ 8001296:	461a      	mov	r2, r3
+ 8001298:	4b0d      	ldr	r3, [pc, #52]	@ (80012d0 <main+0x198>)
+ 800129a:	791b      	ldrb	r3, [r3, #4]
+ 800129c:	fb02 f303 	mul.w	r3, r2, r3
+ 80012a0:	f503 7296 	add.w	r2, r3, #300	@ 0x12c
+ 80012a4:	4b11      	ldr	r3, [pc, #68]	@ (80012ec <main+0x1b4>)
+ 80012a6:	639a      	str	r2, [r3, #56]	@ 0x38
 	  if(button_pressed > 0){
- 80012a6:	e773      	b.n	8001190 <main+0x58>
- 80012a8:	00000000 	.word	0x00000000
- 80012ac:	40affe00 	.word	0x40affe00
+ 80012a8:	e772      	b.n	8001190 <main+0x58>
+ 80012aa:	bf00      	nop
+ 80012ac:	f3af 8000 	nop.w
  80012b0:	00000000 	.word	0x00000000
- 80012b4:	4072c000 	.word	0x4072c000
+ 80012b4:	40affe00 	.word	0x40affe00
  80012b8:	20000100 	.word	0x20000100
  80012bc:	20000148 	.word	0x20000148
  80012c0:	2000008c 	.word	0x2000008c

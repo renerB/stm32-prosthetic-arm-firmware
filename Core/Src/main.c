@@ -36,6 +36,7 @@
 
 #define MIN_DUTY_CICLE 300
 #define MAX_DUTY_CICLE 1200
+#define DUTY_CYCLE_RANGE 900 // MAX_DUTY_CICLE - MIN_DUTY_CICLE
 #define POSTURES 4
 #define DMA_BUFFER_SIZE 1
 
@@ -214,15 +215,15 @@ int main(void)
 		  finished_conversion = 0;
 
 		  rms_value = rms(adc_result, DMA_BUFFER_SIZE);
-		  duty_cycle = ((rms_value/4095.0)*(MAX_DUTY_CICLE-MIN_DUTY_CICLE)) + MIN_DUTY_CICLE;
+		  duty_cycle = ((rms_value/4095.0)*(DUTY_CYCLE_RANGE));
 	  }
 
 
-	  TIM2->CCR1=duty_cycle*finger_position[0];
-	  TIM2->CCR2=duty_cycle*finger_position[1];
-	  TIM2->CCR4=duty_cycle*finger_position[2];
-	  TIM3->CCR1=duty_cycle*finger_position[3];
-	  TIM3->CCR2=duty_cycle*finger_position[4];
+	  TIM2->CCR1=duty_cycle*finger_position[0] + MIN_DUTY_CICLE;
+	  TIM2->CCR2=duty_cycle*finger_position[1] + MIN_DUTY_CICLE;
+	  TIM2->CCR4=duty_cycle*finger_position[2] + MIN_DUTY_CICLE;
+	  TIM3->CCR1=duty_cycle*finger_position[3] + MIN_DUTY_CICLE;
+	  TIM3->CCR2=duty_cycle*finger_position[4] + MIN_DUTY_CICLE;
 
 
 //	  if(adc_result >= 2000){
