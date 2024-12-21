@@ -8,7 +8,7 @@
 ../Core/Src/main.c:466:13:MX_TIM4_Init	4
 ../Core/Src/main.c:509:13:MX_DMA_Init	1
 ../Core/Src/main.c:527:13:MX_GPIO_Init	1
-../Core/Src/main.c:565:6:HAL_ADC_ConvCpltCallback	1
-../Core/Src/main.c:570:6:HAL_GPIO_EXTI_Callback	2
-../Core/Src/main.c:578:6:HAL_TIM_PeriodElapsedCallback	2
-../Core/Src/main.c:591:6:Error_Handler	1
+../Core/Src/main.c:565:6:HAL_ADC_ConvCpltCallback	2
+../Core/Src/main.c:575:6:HAL_GPIO_EXTI_Callback	2
+../Core/Src/main.c:583:6:HAL_TIM_PeriodElapsedCallback	2
+../Core/Src/main.c:596:6:Error_Handler	1

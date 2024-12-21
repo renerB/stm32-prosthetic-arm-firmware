@@ -38,7 +38,7 @@
 #define MAX_DUTY_CICLE 1200
 #define DUTY_CYCLE_RANGE 900 // MAX_DUTY_CICLE - MIN_DUTY_CICLE
 #define POSTURES 4
-#define DMA_BUFFER_SIZE 1
+#define RMS_WINDOW_SIZE 100
 
 /* USER CODE END PD */
 
@@ -58,15 +58,15 @@ TIM_HandleTypeDef htim4;
 /* USER CODE BEGIN PV */
 
 uint16_t duty_cycle = MIN_DUTY_CICLE;
-uint32_t adc_result[DMA_BUFFER_SIZE];
+uint32_t adc_result[RMS_WINDOW_SIZE];
 float rms_value = 0.0;
 uint8_t mode = 0;
+uint8_t rms_index = 0;
 uint8_t finger_position[] = {0,0,0,0,0};
 
 uint8_t button_pressed = 0;
 uint8_t start_conversion = 0;
 uint8_t finished_conversion = 0;
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -208,13 +208,13 @@ int main(void)
 		  start_conversion = 0;
 
 //		  HAL_GPIO_TogglePin(LED_PIN_GPIO_Port, LED_PIN_Pin);
-		  HAL_ADC_Start_DMA(&hadc1, adc_result, DMA_BUFFER_SIZE);
+		  HAL_ADC_Start_DMA(&hadc1, adc_result+rms_index, 1);
 	  }
 
 	  if(finished_conversion > 0){
 		  finished_conversion = 0;
 
-		  rms_value = rms(adc_result, DMA_BUFFER_SIZE);
+		  rms_value = rms(adc_result, RMS_WINDOW_SIZE);
 		  duty_cycle = ((rms_value/4095.0)*(DUTY_CYCLE_RANGE));
 	  }
 
@@ -564,7 +564,12 @@ static void MX_GPIO_Init(void)
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-	finished_conversion++;
+	if(rms_index >= RMS_WINDOW_SIZE){
+		rms_index = 0;
+		finished_conversion++;
+	} else{
+		rms_index++;
+	}
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
