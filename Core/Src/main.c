@@ -39,6 +39,7 @@
 #define DUTY_CYCLE_RANGE 900 // MAX_DUTY_CICLE - MIN_DUTY_CICLE
 #define POSTURES 4
 #define RMS_WINDOW_SIZE 100
+#define VMAX 3230.0 // Defined by the maximum RMS value due to the amplifier saturation. It is equivalent to 2.6V.
 
 /* USER CODE END PD */
 
@@ -215,7 +216,11 @@ int main(void)
 		  finished_conversion = 0;
 
 		  rms_value = rms(adc_result, RMS_WINDOW_SIZE);
-		  duty_cycle = ((rms_value/4095.0)*(DUTY_CYCLE_RANGE));
+
+		  if(rms_value > VMAX){
+			  rms_value = VMAX;
+		  }
+		  duty_cycle = ((rms_value/VMAX)*(DUTY_CYCLE_RANGE));
 	  }
 
 
