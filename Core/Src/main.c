@@ -40,6 +40,8 @@
 #define POSTURES 4
 #define RMS_WINDOW_SIZE 100
 #define VMAX 3230.0 // Defined by the maximum RMS value due to the amplifier saturation. It is equivalent to 2.6V.
+#define VMIN 0.0 // Defines the minimum RMS value considered to eliminate the DC component when there is no muscular activity.
+				 // It is equivalent to 0V.
 
 /* USER CODE END PD */
 
@@ -220,6 +222,11 @@ int main(void)
 		  if(rms_value > VMAX){
 			  rms_value = VMAX;
 		  }
+
+		  if(rms_value < VMIN){
+			  rms_value = VMIN;
+		  }
+
 		  duty_cycle = ((rms_value/VMAX)*(DUTY_CYCLE_RANGE));
 	  }
 
