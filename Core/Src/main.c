@@ -228,6 +228,15 @@ int main(void)
 		  }
 
 		  duty_cycle = ((rms_value/VMAX)*(DUTY_CYCLE_RANGE));
+
+		  // The following lines are for a discreet behavior
+
+//		  if(rms_value > VMIN){
+//			  duty_cycle = DUTY_CYCLE_RANGE;
+//		  }
+//		  else {
+//			  duty_cycle = 0;
+//		  }
 	  }
 
 
