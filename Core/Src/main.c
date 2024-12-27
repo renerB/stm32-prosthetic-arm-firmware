@@ -38,9 +38,9 @@
 #define MAX_DUTY_CICLE 1200
 #define DUTY_CYCLE_RANGE 900 // MAX_DUTY_CICLE - MIN_DUTY_CICLE
 #define POSTURES 4
-#define RMS_WINDOW_SIZE 500
-#define VMAX 3230.0 // Defined by the maximum RMS value due to the amplifier saturation. It is equivalent to 2.6V.
-#define VMIN 0.0 // Defines the minimum RMS value considered to eliminate the DC component when there is no muscular activity.
+#define RMS_WINDOW_SIZE 250
+#define VMAX 2500.0 // Defined by the maximum RMS value due to the amplifier saturation. It is equivalent to 2.6V.
+#define VMIN 450.0 // Defines the minimum RMS value considered to eliminate the DC component when there is no muscular activity.
 				 // It is equivalent to 0V.
 
 /* USER CODE END PD */
