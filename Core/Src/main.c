@@ -210,7 +210,6 @@ int main(void)
 	  if(start_conversion > 0){
 		  start_conversion = 0;
 
-//		  HAL_GPIO_TogglePin(LED_PIN_GPIO_Port, LED_PIN_Pin);
 		  HAL_ADC_Start_DMA(&hadc1, adc_result+rms_index, 1);
 	  }
 
@@ -247,11 +246,6 @@ int main(void)
 	  TIM3->CCR2=duty_cycle*finger_position[4] + MIN_DUTY_CICLE;
 
 
-//	  if(adc_result >= 2000){
-//		  HAL_GPIO_WritePin(LED_PIN_GPIO_Port, LED_PIN_Pin, GPIO_PIN_SET);
-//	  } else {
-//		  HAL_GPIO_WritePin(LED_PIN_GPIO_Port, LED_PIN_Pin, GPIO_PIN_RESET);
-//	  }
   }
   /* USER CODE END 3 */
 }
