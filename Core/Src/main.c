@@ -63,7 +63,7 @@ TIM_HandleTypeDef htim4;
 uint16_t duty_cycle = MIN_DUTY_CICLE;
 uint32_t adc_result[RMS_WINDOW_SIZE];
 float rms_value = 0.0;
-uint8_t mode = 0;
+uint8_t mode = 1;
 uint8_t rms_index = 0;
 uint8_t finger_position[] = {0,0,0,0,0};
 
