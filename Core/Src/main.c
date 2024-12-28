@@ -42,6 +42,7 @@
 #define VMAX 2500.0 // Defined by the maximum RMS value due to the amplifier saturation. It is equivalent to 2.6V.
 #define VMIN 450.0 // Defines the minimum RMS value considered to eliminate the DC component when there is no muscular activity.
 				 // It is equivalent to 0V.
+#define VRANGE 2050
 
 /* USER CODE END PD */
 
@@ -226,7 +227,7 @@ int main(void)
 			  rms_value = VMIN;
 		  }
 
-		  duty_cycle = ((rms_value/VMAX)*(DUTY_CYCLE_RANGE));
+		  duty_cycle = (((rms_value - VMIN)/VRANGE)*(DUTY_CYCLE_RANGE));
 
 		  // The following lines are for a discreet behavior
 
