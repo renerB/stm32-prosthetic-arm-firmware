@@ -34,9 +34,9 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-#define MIN_DUTY_CICLE 300
+#define MIN_DUTY_CICLE 250
 #define MAX_DUTY_CICLE 1200
-#define DUTY_CYCLE_RANGE 900 // MAX_DUTY_CICLE - MIN_DUTY_CICLE
+#define DUTY_CYCLE_RANGE 850 // MAX_DUTY_CICLE - MIN_DUTY_CICLE
 #define POSTURES 4
 #define RMS_WINDOW_SIZE 250
 #define VMAX 2500.0 // Defined by the maximum RMS value due to the amplifier saturation. It is equivalent to 2.6V.
