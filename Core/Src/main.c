@@ -37,12 +37,12 @@
 #define MIN_DUTY_CICLE 250
 #define MAX_DUTY_CICLE 1200
 #define DUTY_CYCLE_RANGE 850 // MAX_DUTY_CICLE - MIN_DUTY_CICLE
-#define POSTURES 4
+#define POSTURES 8
 #define RMS_WINDOW_SIZE 250
-#define VMAX 2500.0 // Defined by the maximum RMS value due to the amplifier saturation. It is equivalent to 2.6V.
-#define VMIN 450.0 // Defines the minimum RMS value considered to eliminate the DC component when there is no muscular activity.
+#define VMAX 1800.0 // Defined by the maximum RMS value due to the amplifier saturation. It is equivalent to 2.6V.
+#define VMIN 500.0 // Defines the minimum RMS value considered to eliminate the DC component when there is no muscular activity.
 				 // It is equivalent to 0V.
-#define VRANGE 2050
+#define VRANGE 1650
 
 /* USER CODE END PD */
 
@@ -61,12 +61,12 @@ TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN PV */
 
-uint16_t duty_cycle = MIN_DUTY_CICLE;
+uint16_t duty_cycle = 250;
 uint32_t adc_result[RMS_WINDOW_SIZE];
 float rms_value = 0.0;
 uint8_t mode = 1;
 uint8_t rms_index = 0;
-uint8_t finger_position[] = {0,0,0,0,0};
+uint32_t finger_position[] = {0,0,0,0,0};
 
 uint8_t button_pressed = 0;
 uint8_t start_conversion = 0;
@@ -117,6 +117,75 @@ void generate_fingers_positions(uint8_t *finger_position, uint8_t mode)
 		finger_position[2] = 0;
 		finger_position[3] = 0;
 		finger_position[4] = 0;
+		break;
+	}
+}
+
+void generate_fingers_positions_binary(uint32_t *finger_position, uint8_t mode)
+{
+	switch(mode){
+	case 1:
+		finger_position[0] = MIN_DUTY_CICLE;
+		finger_position[1] = MIN_DUTY_CICLE;
+		finger_position[2] = MIN_DUTY_CICLE;
+		finger_position[3] = MIN_DUTY_CICLE;
+		finger_position[4] = MIN_DUTY_CICLE;
+		break;
+	case 2:
+		finger_position[0] = MAX_DUTY_CICLE;
+		finger_position[1] = MAX_DUTY_CICLE;
+		finger_position[2] = MAX_DUTY_CICLE;
+		finger_position[3] = MAX_DUTY_CICLE;
+		finger_position[4] = MAX_DUTY_CICLE;
+		break;
+	case 3:
+		finger_position[0] = MAX_DUTY_CICLE;
+		finger_position[1] = MAX_DUTY_CICLE;
+		finger_position[2] = MIN_DUTY_CICLE;
+		finger_position[3] = MIN_DUTY_CICLE;
+		finger_position[4] = MIN_DUTY_CICLE;
+		break;
+	case 4:
+		finger_position[0] = MAX_DUTY_CICLE;
+		finger_position[1] = MIN_DUTY_CICLE;
+		finger_position[2] = MIN_DUTY_CICLE;
+		finger_position[3] = MIN_DUTY_CICLE;
+		finger_position[4] = MIN_DUTY_CICLE;
+		break;
+	case 5:
+		finger_position[0] = MIN_DUTY_CICLE;
+		finger_position[1] = MIN_DUTY_CICLE;
+		finger_position[2] = MAX_DUTY_CICLE;
+		finger_position[3] = MAX_DUTY_CICLE;
+		finger_position[4] = MAX_DUTY_CICLE;
+		break;
+	case 6:
+		finger_position[0] = MIN_DUTY_CICLE;
+		finger_position[1] = MAX_DUTY_CICLE;
+		finger_position[2] = MAX_DUTY_CICLE;
+		finger_position[3] = MAX_DUTY_CICLE;
+		finger_position[4] = MAX_DUTY_CICLE;
+		break;
+	case 7:
+		finger_position[0] = MAX_DUTY_CICLE;
+		finger_position[1] = MIN_DUTY_CICLE;
+		finger_position[2] = MAX_DUTY_CICLE;
+		finger_position[3] = MAX_DUTY_CICLE;
+		finger_position[4] = MAX_DUTY_CICLE;
+		break;
+	case 8:
+		finger_position[0] = MAX_DUTY_CICLE;
+		finger_position[1] = MIN_DUTY_CICLE;
+		finger_position[2] = MIN_DUTY_CICLE;
+		finger_position[3] = MAX_DUTY_CICLE;
+		finger_position[4] = MAX_DUTY_CICLE;
+		break;
+	case 9:
+		finger_position[0] = MAX_DUTY_CICLE;
+		finger_position[1] = MIN_DUTY_CICLE;
+		finger_position[2] = MAX_DUTY_CICLE;
+		finger_position[3] = MAX_DUTY_CICLE;
+		finger_position[4] = MIN_DUTY_CICLE;
 		break;
 	}
 }
@@ -187,6 +256,8 @@ int main(void)
   // Start TIM4 interruption for sampling rate control
   HAL_TIM_Base_Start_IT(&htim4);
 
+  generate_fingers_positions_binary(finger_position, mode);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -205,7 +276,8 @@ int main(void)
 		  } else{
 			  mode++;
 		  }
-		  generate_fingers_positions(finger_position, mode);
+//		  generate_fingers_positions(finger_position, mode);
+		  generate_fingers_positions_binary(finger_position, mode);
 	  }
 
 	  if(start_conversion > 0){
@@ -219,15 +291,15 @@ int main(void)
 
 		  rms_value = rms(adc_result, RMS_WINDOW_SIZE);
 
-		  if(rms_value > VMAX){
-			  rms_value = VMAX;
-		  }
+//		  if(rms_value > VMAX){
+//			  rms_value = VMAX;
+//		  }
+//
+//		  if(rms_value < VMIN){
+//			  rms_value = VMIN;
+//		  }
 
-		  if(rms_value < VMIN){
-			  rms_value = VMIN;
-		  }
-
-		  duty_cycle = (((rms_value - VMIN)/VRANGE)*(DUTY_CYCLE_RANGE));
+//		  duty_cycle = (((rms_value - VMIN)/VRANGE)*(DUTY_CYCLE_RANGE));
 
 		  // The following lines are for a discreet behavior
 
@@ -240,11 +312,28 @@ int main(void)
 	  }
 
 
-	  TIM2->CCR1=duty_cycle*finger_position[0] + MIN_DUTY_CICLE;
-	  TIM2->CCR2=duty_cycle*finger_position[1] + MIN_DUTY_CICLE;
-	  TIM2->CCR4=duty_cycle*finger_position[2] + MIN_DUTY_CICLE;
-	  TIM3->CCR1=duty_cycle*finger_position[3] + MIN_DUTY_CICLE;
-	  TIM3->CCR2=duty_cycle*finger_position[4] + MIN_DUTY_CICLE;
+//	  TIM2->CCR1=duty_cycle*finger_position[0] + MIN_DUTY_CICLE;
+//	  TIM2->CCR2=duty_cycle*finger_position[1] + MIN_DUTY_CICLE;
+//	  TIM2->CCR4=duty_cycle*finger_position[2] + MIN_DUTY_CICLE;
+//	  TIM3->CCR1=duty_cycle*finger_position[3] + MIN_DUTY_CICLE;
+//	  TIM3->CCR2=duty_cycle*finger_position[4] + MIN_DUTY_CICLE;
+
+	  // The following lines are for a discreet behavior
+
+	  if(rms_value > VMIN){
+		  TIM2->CCR1=finger_position[0];
+		  TIM2->CCR2=finger_position[1];
+		  TIM2->CCR4=finger_position[2];
+		  TIM3->CCR1=finger_position[3];
+		  TIM3->CCR2=finger_position[4];
+	  }
+	  else {
+		  TIM2->CCR1=MIN_DUTY_CICLE;
+		  TIM2->CCR2=MIN_DUTY_CICLE;
+		  TIM2->CCR4=MIN_DUTY_CICLE;
+		  TIM3->CCR1=MIN_DUTY_CICLE;
+		  TIM3->CCR2=MIN_DUTY_CICLE;
+	  }
 
 
   }
