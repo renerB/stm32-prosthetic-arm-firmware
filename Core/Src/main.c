@@ -182,6 +182,13 @@ void generate_fingers_positions_binary(uint32_t *finger_position, uint8_t mode)
 		break;
 	case 9:
 		finger_position[0] = MAX_DUTY_CICLE;
+		finger_position[1] = MAX_DUTY_CICLE;
+		finger_position[2] = MAX_DUTY_CICLE;
+		finger_position[3] = MIN_DUTY_CICLE;
+		finger_position[4] = MIN_DUTY_CICLE;
+		break;
+	case 10:
+		finger_position[0] = MAX_DUTY_CICLE;
 		finger_position[1] = MIN_DUTY_CICLE;
 		finger_position[2] = MAX_DUTY_CICLE;
 		finger_position[3] = MAX_DUTY_CICLE;
