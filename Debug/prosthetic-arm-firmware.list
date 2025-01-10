@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000029  00000000  00000000  00006070  2**0
                   CONTENTS, READONLY
- 12 .debug_info   0000a98b  00000000  00000000  00006099  2**0
+ 12 .debug_info   0000a957  00000000  00000000  00006099  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00001eb8  00000000  00000000  00010a24  2**0
+ 13 .debug_abbrev 00001eb6  00000000  00000000  000109f0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000bc0  00000000  00000000  000128e0  2**3
+ 14 .debug_aranges 00000bb8  00000000  00000000  000128a8  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 0000091a  00000000  00000000  000134a0  2**0
+ 15 .debug_rnglists 00000913  00000000  00000000  00013460  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00017dde  00000000  00000000  00013dba  2**0
+ 16 .debug_macro  00017dcc  00000000  00000000  00013d73  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000d715  00000000  00000000  0002bb98  2**0
+ 17 .debug_line   0000d683  00000000  00000000  0002bb3f  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0008d07b  00000000  00000000  000392ad  2**0
+ 18 .debug_str    0008d02c  00000000  00000000  000391c2  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000c6328  2**0
+ 19 .comment      00000043  00000000  00000000  000c61ee  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00003578  00000000  00000000  000c636c  2**2
+ 20 .debug_frame  00003550  00000000  00000000  000c6234  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000076  00000000  00000000  000c98e4  2**0
+ 21 .debug_line_str 00000076  00000000  00000000  000c9784  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1406,12 +1406,12 @@ Disassembly of section .text:
  8001066:	f85d fb08 	ldr.w	pc, [sp], #8
  800106a:	bf00      	nop
 
-0800106c <generate_fingers_positions_binary>:
-		break;
-	}
-}
+0800106c <generate_fingers_positions>:
+/* USER CODE END PFP */
 
-void generate_fingers_positions_binary(uint32_t *finger_position, uint8_t mode)
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+void generate_fingers_positions(uint32_t *finger_position, uint8_t mode)
 {
  800106c:	b480      	push	{r7}
  800106e:	b083      	sub	sp, #12
@@ -1423,8 +1423,8 @@ void generate_fingers_positions_binary(uint32_t *finger_position, uint8_t mode)
  8001078:	78fb      	ldrb	r3, [r7, #3]
  800107a:	3b01      	subs	r3, #1
  800107c:	2b09      	cmp	r3, #9
- 800107e:	f200 80fb 	bhi.w	8001278 <generate_fingers_positions_binary+0x20c>
- 8001082:	a201      	add	r2, pc, #4	@ (adr r2, 8001088 <generate_fingers_positions_binary+0x1c>)
+ 800107e:	f200 80fb 	bhi.w	8001278 <generate_fingers_positions+0x20c>
+ 8001082:	a201      	add	r2, pc, #4	@ (adr r2, 8001088 <generate_fingers_positions+0x1c>)
  8001084:	f852 f023 	ldr.w	pc, [r2, r3, lsl #2]
  8001088:	080010b1 	.word	0x080010b1
  800108c:	080010d9 	.word	0x080010d9
@@ -1462,7 +1462,7 @@ void generate_fingers_positions_binary(uint32_t *finger_position, uint8_t mode)
  80010d2:	22fa      	movs	r2, #250	@ 0xfa
  80010d4:	601a      	str	r2, [r3, #0]
 		break;
- 80010d6:	e0cf      	b.n	8001278 <generate_fingers_positions_binary+0x20c>
+ 80010d6:	e0cf      	b.n	8001278 <generate_fingers_positions+0x20c>
 	case 2:
 		finger_position[0] = MAX_DUTY_CICLE;
  80010d8:	687b      	ldr	r3, [r7, #4]
@@ -1489,7 +1489,7 @@ void generate_fingers_positions_binary(uint32_t *finger_position, uint8_t mode)
  8001102:	f44f 6296 	mov.w	r2, #1200	@ 0x4b0
  8001106:	601a      	str	r2, [r3, #0]
 		break;
- 8001108:	e0b6      	b.n	8001278 <generate_fingers_positions_binary+0x20c>
+ 8001108:	e0b6      	b.n	8001278 <generate_fingers_positions+0x20c>
 	case 3:
 		finger_position[0] = MAX_DUTY_CICLE;
  800110a:	687b      	ldr	r3, [r7, #4]
@@ -1516,7 +1516,7 @@ void generate_fingers_positions_binary(uint32_t *finger_position, uint8_t mode)
  8001130:	22fa      	movs	r2, #250	@ 0xfa
  8001132:	601a      	str	r2, [r3, #0]
 		break;
- 8001134:	e0a0      	b.n	8001278 <generate_fingers_positions_binary+0x20c>
+ 8001134:	e0a0      	b.n	8001278 <generate_fingers_positions+0x20c>
 	case 4:
 		finger_position[0] = MAX_DUTY_CICLE;
  8001136:	687b      	ldr	r3, [r7, #4]
@@ -1543,7 +1543,7 @@ void generate_fingers_positions_binary(uint32_t *finger_position, uint8_t mode)
  800115a:	22fa      	movs	r2, #250	@ 0xfa
  800115c:	601a      	str	r2, [r3, #0]
 		break;
- 800115e:	e08b      	b.n	8001278 <generate_fingers_positions_binary+0x20c>
+ 800115e:	e08b      	b.n	8001278 <generate_fingers_positions+0x20c>
 	case 5:
 		finger_position[0] = MIN_DUTY_CICLE;
  8001160:	687b      	ldr	r3, [r7, #4]
@@ -1570,7 +1570,7 @@ void generate_fingers_positions_binary(uint32_t *finger_position, uint8_t mode)
  8001186:	f44f 6296 	mov.w	r2, #1200	@ 0x4b0
  800118a:	601a      	str	r2, [r3, #0]
 		break;
- 800118c:	e074      	b.n	8001278 <generate_fingers_positions_binary+0x20c>
+ 800118c:	e074      	b.n	8001278 <generate_fingers_positions+0x20c>
 	case 6:
 		finger_position[0] = MIN_DUTY_CICLE;
  800118e:	687b      	ldr	r3, [r7, #4]
@@ -1597,7 +1597,7 @@ void generate_fingers_positions_binary(uint32_t *finger_position, uint8_t mode)
  80011b6:	f44f 6296 	mov.w	r2, #1200	@ 0x4b0
  80011ba:	601a      	str	r2, [r3, #0]
 		break;
- 80011bc:	e05c      	b.n	8001278 <generate_fingers_positions_binary+0x20c>
+ 80011bc:	e05c      	b.n	8001278 <generate_fingers_positions+0x20c>
 	case 7:
 		finger_position[0] = MAX_DUTY_CICLE;
  80011be:	687b      	ldr	r3, [r7, #4]
@@ -1624,7 +1624,7 @@ void generate_fingers_positions_binary(uint32_t *finger_position, uint8_t mode)
  80011e6:	f44f 6296 	mov.w	r2, #1200	@ 0x4b0
  80011ea:	601a      	str	r2, [r3, #0]
 		break;
- 80011ec:	e044      	b.n	8001278 <generate_fingers_positions_binary+0x20c>
+ 80011ec:	e044      	b.n	8001278 <generate_fingers_positions+0x20c>
 	case 8:
 		finger_position[0] = MAX_DUTY_CICLE;
  80011ee:	687b      	ldr	r3, [r7, #4]
@@ -1651,7 +1651,7 @@ void generate_fingers_positions_binary(uint32_t *finger_position, uint8_t mode)
  8001214:	f44f 6296 	mov.w	r2, #1200	@ 0x4b0
  8001218:	601a      	str	r2, [r3, #0]
 		break;
- 800121a:	e02d      	b.n	8001278 <generate_fingers_positions_binary+0x20c>
+ 800121a:	e02d      	b.n	8001278 <generate_fingers_positions+0x20c>
 	case 9:
 		finger_position[0] = MAX_DUTY_CICLE;
  800121c:	687b      	ldr	r3, [r7, #4]
@@ -1678,7 +1678,7 @@ void generate_fingers_positions_binary(uint32_t *finger_position, uint8_t mode)
  8001244:	22fa      	movs	r2, #250	@ 0xfa
  8001246:	601a      	str	r2, [r3, #0]
 		break;
- 8001248:	e016      	b.n	8001278 <generate_fingers_positions_binary+0x20c>
+ 8001248:	e016      	b.n	8001278 <generate_fingers_positions+0x20c>
 	case 10:
 		finger_position[0] = MAX_DUTY_CICLE;
  800124a:	687b      	ldr	r3, [r7, #4]
@@ -1873,12 +1873,12 @@ int main(void)
  800136e:	483e      	ldr	r0, [pc, #248]	@ (8001468 <main+0x14c>)
  8001370:	f002 fc4e 	bl	8003c10 <HAL_TIM_Base_Start_IT>
 
-  generate_fingers_positions_binary(finger_position, mode);
+  generate_fingers_positions(finger_position, mode);
  8001374:	4b3d      	ldr	r3, [pc, #244]	@ (800146c <main+0x150>)
  8001376:	781b      	ldrb	r3, [r3, #0]
  8001378:	4619      	mov	r1, r3
  800137a:	483d      	ldr	r0, [pc, #244]	@ (8001470 <main+0x154>)
- 800137c:	f7ff fe76 	bl	800106c <generate_fingers_positions_binary>
+ 800137c:	f7ff fe76 	bl	800106c <generate_fingers_positions>
   {
     /* USER CODE END WHILE */
 
@@ -1913,13 +1913,12 @@ int main(void)
  80013a6:	4b31      	ldr	r3, [pc, #196]	@ (800146c <main+0x150>)
  80013a8:	701a      	strb	r2, [r3, #0]
 		  }
-//		  generate_fingers_positions(finger_position, mode);
-		  generate_fingers_positions_binary(finger_position, mode);
+		  generate_fingers_positions(finger_position, mode);
  80013aa:	4b30      	ldr	r3, [pc, #192]	@ (800146c <main+0x150>)
  80013ac:	781b      	ldrb	r3, [r3, #0]
  80013ae:	4619      	mov	r1, r3
  80013b0:	482f      	ldr	r0, [pc, #188]	@ (8001470 <main+0x154>)
- 80013b2:	f7ff fe5b 	bl	800106c <generate_fingers_positions_binary>
+ 80013b2:	f7ff fe5b 	bl	800106c <generate_fingers_positions>
 	  }
 
 	  if(start_conversion > 0){
@@ -1961,10 +1960,7 @@ int main(void)
  80013ee:	4603      	mov	r3, r0
  80013f0:	4a25      	ldr	r2, [pc, #148]	@ (8001488 <main+0x16c>)
  80013f2:	6013      	str	r3, [r2, #0]
-//	  TIM3->CCR1=duty_cycle*finger_position[3] + MIN_DUTY_CICLE;
-//	  TIM3->CCR2=duty_cycle*finger_position[4] + MIN_DUTY_CICLE;
-
-	  // The following lines are for a discreet behavior
+	  }
 
 	  if(rms_value > VMIN){
  80013f4:	4b24      	ldr	r3, [pc, #144]	@ (8001488 <main+0x16c>)
